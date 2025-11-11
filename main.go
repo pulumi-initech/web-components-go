@@ -18,6 +18,7 @@ const (
 func main() {
 	// Build the provider with both component resources
 	provider, err := infer.NewProviderBuilder().
+		WithNamespace("pulumi-initech").
 		WithComponents(
 			infer.ComponentF(acm.NewDnsValidatedCertificate),
 			infer.ComponentF(web.NewWebEnvironment),

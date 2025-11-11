@@ -1,4 +1,4 @@
-.PHONY: build install clean test
+.PHONY: build install clean test deps fmt lint gen-sdk
 
 VERSION ?= 0.1.0
 PROVIDER_NAME := web-components
@@ -20,6 +20,7 @@ install: build
 clean:
 	@echo "Cleaning..."
 	rm -rf bin/
+	rm -rf sdk/
 	rm -rf ~/.pulumi/plugins/resource-$(PROVIDER_NAME)-v$(VERSION)
 
 # Run tests
@@ -42,5 +43,9 @@ fmt:
 lint:
 	@echo "Running linter..."
 	golangci-lint run
+
+gen-sdk: build
+	@echo "Generating SDK..."
+	pulumi package gen-sdk ./bin/$(PROVIDER_BINARY)
 
 .DEFAULT_GOAL := build

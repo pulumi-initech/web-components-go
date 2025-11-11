@@ -140,8 +140,8 @@ func main() {
                 pulumi.String("subnet-def456"),
             },
             CertificateArn:  cert.CertificateArn,
-            ZoneId:          pulumi.String("Z1234567890ABC"),
-            Subdomain:       pulumi.String("www.example.com"),
+            ZoneId:          cert.ZoneId,
+            Subdomain:       cert.DomainName,
         })
         if err != nil {
             return err
