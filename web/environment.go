@@ -2,14 +2,13 @@ package web
 
 import (
 	"encoding/base64"
-	"fmt"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/alb"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/autoscaling"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/cloudwatch"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/route53"
-	p "github.com/pulumi/pulumi-go-provider"
+	"github.com/pulumi/pulumi-go-provider/infer"
 	"github.com/pulumi/pulumi-tls/sdk/v5/go/tls"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -40,7 +39,7 @@ func NewWebEnvironment(ctx *pulumi.Context, name string, args WebEnvironmentArgs
 	comp := &WebEnvironment{}
 
 	// Register the component resource
-	err := ctx.RegisterComponentResource(p.GetTypeToken(ctx), name, comp, opts...)
+	err := ctx.RegisterComponentResource("web-components:web:WebEnvironment", name, comp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +204,7 @@ sudo systemctl start nginx`
 		Threshold:          pulumi.Float64(1000.0),
 		ComparisonOperator: pulumi.String("GreaterThanOrEqualToThreshold"),
 		Statistic:          pulumi.String("Sum"),
-		AlarmActions:       pulumi.StringArray{scaleOutPolicy.Arn},
+		AlarmActions:       pulumi.Array{scaleOutPolicy.Arn}.ToArrayOutput(),
 	}, pulumi.Parent(scaleOutPolicy))
 	if err != nil {
 		return nil, err
@@ -223,7 +222,7 @@ sudo systemctl start nginx`
 		Threshold:          pulumi.Float64(500.0),
 		ComparisonOperator: pulumi.String("LessThanOrEqualToThreshold"),
 		Statistic:          pulumi.String("Sum"),
-		AlarmActions:       pulumi.StringArray{scaleInPolicy.Arn},
+		AlarmActions:       pulumi.Array{scaleInPolicy.Arn}.ToArrayOutput(),
 	}, pulumi.Parent(scaleInPolicy))
 	if err != nil {
 		return nil, err
@@ -289,8 +288,8 @@ sudo systemctl start nginx`
 	// Create Route53 alias record if zone ID and subdomain are provided
 	if args.ZoneId != nil && args.Subdomain != nil {
 		_, err = route53.NewRecord(ctx, "alias", &route53.RecordArgs{
-			ZoneId: args.ZoneId,
-			Name:   args.Subdomain,
+			ZoneId: args.ZoneId.ToStringPtrOutput().Elem(),
+			Name:   args.Subdomain.ToStringPtrOutput().Elem(),
 			Type:   pulumi.String("A"),
 			Aliases: route53.RecordAliasArray{
 				&route53.RecordAliasArgs{
@@ -314,7 +313,7 @@ sudo systemctl start nginx`
 }
 
 // Annotate provides descriptions for the component and its properties
-func (w *WebEnvironment) Annotate(a p.Annotator) {
+func (w *WebEnvironment) Annotate(a infer.Annotator) {
 	a.Describe(&w, "Creates a complete web hosting environment with auto-scaling, load balancing, and optional DNS configuration")
 	a.Describe(&w.VpcId, "The VPC ID where resources will be created")
 	a.Describe(&w.VpcCidr, "The CIDR block of the VPC for security group rules")
