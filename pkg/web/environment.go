@@ -193,8 +193,8 @@ sudo systemctl start nginx`
 
 	// Create CloudWatch alarms
 	_, err = cloudwatch.NewMetricAlarm(ctx, "albHighRequestAlarm", &cloudwatch.MetricAlarmArgs{
-		Name:      pulumi.String("alb-high-requests-alarm"),
-		Namespace: pulumi.String("AWS/ApplicationELB"),
+		Name:       pulumi.String("alb-high-requests-alarm"),
+		Namespace:  pulumi.String("AWS/ApplicationELB"),
 		MetricName: pulumi.String("RequestCount"),
 		Dimensions: pulumi.StringMap{
 			"LoadBalancer": pulumi.String(name + "-alb"),
@@ -211,8 +211,8 @@ sudo systemctl start nginx`
 	}
 
 	_, err = cloudwatch.NewMetricAlarm(ctx, "albLowRequestAlarm", &cloudwatch.MetricAlarmArgs{
-		Name:      pulumi.String("alb-low-requests-alarm"),
-		Namespace: pulumi.String("AWS/ApplicationELB"),
+		Name:       pulumi.String("alb-low-requests-alarm"),
+		Namespace:  pulumi.String("AWS/ApplicationELB"),
 		MetricName: pulumi.String("RequestCount"),
 		Dimensions: pulumi.StringMap{
 			"LoadBalancer": pulumi.String(name + "-alb"),

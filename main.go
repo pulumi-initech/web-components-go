@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pulumi-initech/web-components-go/provider/pkg/acm"
-	"github.com/pulumi-initech/web-components-go/provider/pkg/web"
+	"github.com/pulumi-initech/web-components-go/pkg/acm"
+	"github.com/pulumi-initech/web-components-go/pkg/web"
 	"github.com/pulumi/pulumi-go-provider/infer"
 )
 
 const (
 	providerName    = "web-components"
-	providerVersion = "0.1.0"
+	providerVersion = "0.1.2"
 )
 
 func main() {

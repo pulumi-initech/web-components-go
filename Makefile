@@ -7,7 +7,7 @@ PROVIDER_BINARY := pulumi-resource-$(PROVIDER_NAME)
 # Build the provider binary
 build:
 	@echo "Building provider..."
-	cd provider/cmd/$(PROVIDER_BINARY) && go build -o ../../../bin/$(PROVIDER_BINARY) .
+	 go build -o ./bin/$(PROVIDER_BINARY) .
 
 # Install the provider locally for testing
 install: build
@@ -42,10 +42,5 @@ fmt:
 lint:
 	@echo "Running linter..."
 	golangci-lint run
-
-# Generate schema (if using schema generation)
-schema:
-	@echo "Generating schema..."
-	go run provider/cmd/$(PROVIDER_BINARY)/main.go schema > provider/schema.json
 
 .DEFAULT_GOAL := build
