@@ -1,8 +1,9 @@
 .PHONY: build install clean test deps fmt lint gen-sdk
 
-VERSION ?= 0.1.0
+VERSION ?= 0.1.6
 PROVIDER_NAME := web-components
 PROVIDER_BINARY := pulumi-resource-$(PROVIDER_NAME)
+GIT_REPO := github.com/pulumi-initech/$(PROVIDER_NAME)-go
 
 # Build the provider binary
 build:
@@ -47,5 +48,9 @@ lint:
 gen-sdk: build
 	@echo "Generating SDK..."
 	pulumi package gen-sdk ./bin/$(PROVIDER_BINARY)
+
+publish:
+	@echo "Publishing package..."
+	pulumi package publish $(GIT_REPO)@$(VERSION)
 
 .DEFAULT_GOAL := build

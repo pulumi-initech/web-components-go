@@ -12,13 +12,14 @@ import (
 
 const (
 	providerName    = "web-components"
-	providerVersion = "0.1.4"
+	providerVersion = "0.1.6"
 )
 
 func main() {
 	// Build the provider with both component resources
 	provider, err := infer.NewProviderBuilder().
 		WithNamespace("pulumi-initech").
+		WithDisplayName("Go Web Components").
 		WithComponents(
 			infer.ComponentF(acm.NewDnsValidatedCertificate),
 			infer.ComponentF(web.NewWebEnvironment),
