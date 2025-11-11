@@ -12,7 +12,7 @@ import (
 
 const (
 	providerName    = "web-components"
-	providerVersion = "0.1.2"
+	providerVersion = "0.1.4"
 )
 
 func main() {

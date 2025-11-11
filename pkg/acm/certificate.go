@@ -27,7 +27,7 @@ func NewDnsValidatedCertificate(ctx *pulumi.Context, name string, args DnsValida
 	comp := &DnsValidatedCertificate{}
 
 	// Register the component resource
-	err := ctx.RegisterComponentResource("web-components:acm:DnsValidatedCertificate", name, comp, opts...)
+	err := ctx.RegisterComponentResource("web-components:index:DnsValidatedCertificate", name, comp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,9 +80,14 @@ func NewDnsValidatedCertificate(ctx *pulumi.Context, name string, args DnsValida
 }
 
 // Annotate provides descriptions for the component and its properties
-func (c *DnsValidatedCertificate) Annotate(a infer.Annotator) {
-	a.Describe(&c, "Creates an ACM certificate with automatic DNS validation via Route53")
+func (c *DnsValidatedCertificateArgs) Annotate(a infer.Annotator) {
 	a.Describe(&c.DomainName, "The domain name for which the certificate should be issued")
 	a.Describe(&c.ZoneId, "The Route53 hosted zone ID where the validation record will be created")
+}
+
+// Annotate provides descriptions for the component and its properties
+func (c *DnsValidatedCertificate) Annotate(a infer.Annotator) {
+	a.Describe(&c.DomainName, "The domain name for which the certificate was issued")
+	a.Describe(&c.ZoneId, "The Route53 hosted zone ID where the validation record was created")
 	a.Describe(&c.CertificateArn, "The ARN of the validated certificate")
 }

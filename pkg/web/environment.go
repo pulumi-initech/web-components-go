@@ -31,7 +31,7 @@ type WebEnvironmentArgs struct {
 type WebEnvironment struct {
 	pulumi.ResourceState
 
-	WebEnvironmentArgs
+	LoadBalancerUrl pulumi.StringOutput `pulumi:"loadBalancerUrl"`
 }
 
 // NewWebEnvironment creates a new WebEnvironment component
@@ -39,7 +39,7 @@ func NewWebEnvironment(ctx *pulumi.Context, name string, args WebEnvironmentArgs
 	comp := &WebEnvironment{}
 
 	// Register the component resource
-	err := ctx.RegisterComponentResource("web-components:web:WebEnvironment", name, comp, opts...)
+	err := ctx.RegisterComponentResource("web-components:index:WebEnvironment", name, comp, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -304,8 +304,15 @@ sudo systemctl start nginx`
 		}
 	}
 
+	// Set the load balancer URL output
+	comp.LoadBalancerUrl = loadBalancer.DnsName.ApplyT(func(dns string) string {
+		return "https://" + dns
+	}).(pulumi.StringOutput)
+
 	// Register outputs
-	if err := ctx.RegisterResourceOutputs(comp, pulumi.Map{}); err != nil {
+	if err := ctx.RegisterResourceOutputs(comp, pulumi.Map{
+		"loadBalancerUrl": comp.LoadBalancerUrl,
+	}); err != nil {
 		return nil, err
 	}
 
@@ -313,8 +320,7 @@ sudo systemctl start nginx`
 }
 
 // Annotate provides descriptions for the component and its properties
-func (w *WebEnvironment) Annotate(a infer.Annotator) {
-	a.Describe(&w, "Creates a complete web hosting environment with auto-scaling, load balancing, and optional DNS configuration")
+func (w *WebEnvironmentArgs) Annotate(a infer.Annotator) {
 	a.Describe(&w.VpcId, "The VPC ID where resources will be created")
 	a.Describe(&w.VpcCidr, "The CIDR block of the VPC for security group rules")
 	a.Describe(&w.ImageId, "The AMI ID to use for EC2 instances")
@@ -325,4 +331,10 @@ func (w *WebEnvironment) Annotate(a infer.Annotator) {
 	a.Describe(&w.CertificateArn, "The ARN of the ACM certificate for HTTPS")
 	a.Describe(&w.ZoneId, "The Route53 hosted zone ID for DNS alias (optional)")
 	a.Describe(&w.Subdomain, "The subdomain for the DNS alias record (optional)")
+}
+
+// Annotate provides descriptions for the component and its properties
+func (w *WebEnvironment) Annotate(a infer.Annotator) {
+	a.Describe(&w, "Creates a complete web hosting environment with auto-scaling, load balancing, and optional DNS configuration")
+	a.Describe(&w.LoadBalancerUrl, "The HTTPS URL of the Application Load Balancer")
 }
